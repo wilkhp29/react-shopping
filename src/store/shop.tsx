@@ -1,17 +1,6 @@
-export type state = {
-  products: Array<product>;
-  cart: Array<product>;
-};
+import { createActions, createReducer } from "reduxsauce";
 
-export type product = {
-  id: number;
-  name: string;
-  price: number;
-  img: string;
-  count: number | null;
-};
-
-export const INITIAL_STATE: state = {
+const INITIAL_STATE: state = {
   products: [
     {
       id: 1,
@@ -82,6 +71,66 @@ export const INITIAL_STATE: state = {
   cart: [],
 };
 
-export default function reducer(state: state) {
-  return state;
-}
+export type state = {
+  products: Array<product>;
+  cart: Array<product>;
+};
+
+export type product = {
+  id: number;
+  name: string;
+  price: number;
+  img: string;
+  count: number | null;
+};
+
+export const { Types, Creators } = createActions({
+  addCar: ["product"],
+  removeCar: ["product"],
+  addCount: ["product"],
+  subtractCount: ["product"],
+});
+
+const addCar = (state: state = INITIAL_STATE, { product }: any) => {
+  product.count = 1;
+  const position = state.cart.indexOf(product);
+  if (position >= 0) return state;
+  return { ...state, cart: [...state.cart, product] };
+};
+
+const removeCar = (state: state = INITIAL_STATE, { product }: any) => {
+  const newCart = state.cart.filter(
+    (CartProduct) => CartProduct.id !== product.id
+  );
+  return { ...state, cart: newCart };
+};
+
+const addCount = (state: state = INITIAL_STATE, { product }: any) => {
+  const indexCount = state.cart.indexOf(product);
+  const cart = state.cart;
+  product.count = (product.count || 0) + 1;
+  cart[indexCount] = product;
+
+  return { ...state, cart };
+};
+
+const subtractCount = (state: state = INITIAL_STATE, { product }: any) => {
+  const indexCount = state.cart.indexOf(product);
+  const cart = state.cart;
+  product.count = (product.count || 0) - 1;
+  if (product.count === 0) {
+    return {
+      ...state,
+      cart: state.cart.filter((CartProduct) => CartProduct.id !== product.id),
+    };
+  }
+  cart[indexCount] = product;
+  return { ...state, cart };
+};
+
+export default createReducer(INITIAL_STATE, {
+  [Types.ADD_CAR]: addCar,
+  [Types.ADD_COUNT]: addCount,
+  [Types.REMOVE_CAR]: removeCar,
+  [Types.SUBTRACT_COUNT]: subtractCount,
+} as any);

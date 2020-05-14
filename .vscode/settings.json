@@ -1,0 +1,4 @@
+{
+  "webAccessibility.trace.server": "verbose",
+  "webAccessibility.semanticExclude": true
+}
