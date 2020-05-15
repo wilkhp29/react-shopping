@@ -1,6 +1,6 @@
 import { createActions, createReducer } from "reduxsauce";
 
-const INITIAL_STATE: state = {
+export const INITIAL_STATE: state = {
   products: [
     {
       id: 1,
@@ -91,33 +91,36 @@ export const { Types, Creators } = createActions({
   subtractCount: ["product"],
 });
 
-const addCar = (state: state = INITIAL_STATE, { product }: any) => {
+export const addCar = (state: state = INITIAL_STATE, { product }: any) => {
   product.count = 1;
   const position = state.cart.indexOf(product);
   if (position >= 0) return state;
   return { ...state, cart: [...state.cart, product] };
 };
 
-const removeCar = (state: state = INITIAL_STATE, { product }: any) => {
+export const removeCar = (state: state = INITIAL_STATE, { product }: any) => {
   const newCart = state.cart.filter(
     (CartProduct) => CartProduct.id !== product.id
   );
   return { ...state, cart: newCart };
 };
 
-const addCount = (state: state = INITIAL_STATE, { product }: any) => {
+export const addCount = (state: state = INITIAL_STATE, { product }: any) => {
   const indexCount = state.cart.indexOf(product);
   const cart = state.cart;
-  product.count = (product.count || 0) + 1;
+  product.count! += 1;
   cart[indexCount] = product;
 
   return { ...state, cart };
 };
 
-const subtractCount = (state: state = INITIAL_STATE, { product }: any) => {
+export const subtractCount = (
+  state: state = INITIAL_STATE,
+  { product }: any
+) => {
   const indexCount = state.cart.indexOf(product);
   const cart = state.cart;
-  product.count = (product.count || 0) - 1;
+  product.count! -= 1;
   if (product.count === 0) {
     return {
       ...state,
